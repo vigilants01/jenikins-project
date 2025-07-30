@@ -1,20 +1,21 @@
 pipeline {
     agent any
+    options { skipDefaultCheckout() }
     stages {
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/vigilants01/jenikins-project', branch: 'main'
-                sh "ls -ltr"
+                sh 'ls -ltr'
             }
         }
         stage('Setup') {
             steps {
-                sh "pip install -r requirements.txt"
+                sh 'pip install -r requirements.txt'
             }
         }
         stage('Test') {
             steps {
-                sh "pytest"
+                sh 'pytest'
             }
         }
     }
