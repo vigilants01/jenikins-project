@@ -1,6 +1,7 @@
 pipeline {
     agent any
     options { skipDefaultCheckout() }
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,11 +9,18 @@ pipeline {
                 sh 'ls -ltr'
             }
         }
+
         stage('Setup') {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r 01-jenkins-basics/requirements.txt
+                '''
             }
         }
+
         stage('Test') {
             steps {
                 sh 'pytest'
