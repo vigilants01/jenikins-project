@@ -12,8 +12,22 @@ pipeline {
 
         stage('Setup') {
             steps {
-                sh "sudo apt update && sudo apt install -y python3-pip"
-                sh "pip install -r requirements.txt"
+                sh '''
+                    # Wait for apt lock (due to unattended upgrades)
+                    while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+                        echo "Waiting for apt lock..."
+                        sleep 5
+                    done
+
+                    sudo apt update
+                    sudo apt install -y python3-pip python3-venv
+
+                    # Create and activate virtual environment
+                    python3 -m venv venv
+                    source venv/bin/activate
+
+                    pip install -r requirements.txt
+                '''
             }
         }
         stage('Test') {
